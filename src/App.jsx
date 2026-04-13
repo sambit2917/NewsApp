@@ -1,16 +1,17 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
-import "./App.css";
+import React from "react";
+import NavBar from "./components/navBar/NavBar";
+import NewsPage from "./components/pages/NewsPage";
+import Category from "./components/category/Category";
+import Footer from "./components/footer/Footer";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div>
-      <h1>Initial App</h1>
-    </div>
+    <>
+     <NavBar className="sticky top-0 z-20"/>
+     <Category className="py-10 sticky top-14 z-10 bg-base-100"/>
+     <NewsPage className="py-10"/>
+     <Footer/>
+    </>
   );
 }
 
