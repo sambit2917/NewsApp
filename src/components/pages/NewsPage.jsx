@@ -1,42 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Wrapper from "../wrapper/Wrapper";
+import { useNewsContext } from "../../context/NewsContext";
+import Loader from "../common/Loader";
 
-export default function NewsPage({className}) {
+export default function NewsPage({ className }) {
+  const { news, setNews, fetchNews, loading } = useNewsContext();
+  console.log(news);
+
+  //? load data on intial render
+  useEffect(() => {
+    (async () => {
+      const data = await fetchNews();
+      setNews(data?.articles);
+    })();
+  }, []);
+
+  if (loading) return <Loader className="m-auto w-fit py-32" />;
+  if (news.length === 0)
+    return <h1 className="m-auto w-fit py-10 text-2xl">No items found</h1>;
+
   return (
     <Wrapper>
       <div className={`grid grid-cols-4 gap-4 ${className}`}>
-        <Newscard />
-        <Newscard />
-        <Newscard />
-        <Newscard />
-        <Newscard />
-        <Newscard />
-        <Newscard />
+        {news.map((newsDetails, idx) => {
+          if (newsDetails?.url === null) return null;
+          return <Newscard key={idx} details={newsDetails} />;
+        })}
       </div>
     </Wrapper>
   );
 }
 
-
-function Newscard(){
-    return (
-      <div className="card bg-base-200 shadow-sm">
-        <figure>
-          <img
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-            alt="Shoes"
-          />
-        </figure>
-        <div className="card-body">
-          <h2 className="card-title">Card Title</h2>
-          <p>
-            A card component has a figure, a body part, and inside body there
-            are title and actions parts
-          </p>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary">Buy Now</button>
-          </div>
+function Newscard({ details }) {
+  return (
+    <div className="card bg-base-200 shadow-sm">
+      <figure>
+        <img
+          className="w-full aspect-video object-cover"
+          src={details?.urlToImage}
+          alt="img"
+        />
+      </figure>
+      <div className="card-body">
+        <h2 className="card-title line-clamp-2">{details?.title}</h2>
+        <p className="line-clamp-3">{details?.description}</p>
+        <div className="card-actions justify-end">
+          <button
+            onClick={() => window.open(details?.url)}
+            className="btn badge-outline"
+          >
+            Read more
+          </button>
         </div>
       </div>
-    );
+    </div>
+  );
 }

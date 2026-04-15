@@ -1,7 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "../wrapper/Wrapper";
+import { useNewsContext } from "../../context/NewsContext";
 
 export default function NavBar({ className }) {
+  const { setNews, fetchNews } = useNewsContext();
+
+  let timer;
+  const searchNews = (e) =>{
+    const searchValue = e.target.value;
+    if(!searchValue) return;
+    clearTimeout(timer);
+
+    // Debounced Search Term
+     timer = setTimeout(async () => {
+      const data = await fetchNews(`/everything?q=${searchValue}`);
+      setNews(data?.articles);
+    }, 1000);
+
+  }
+
   return (
     <div className={`w-full bg-base-200 ${className}`}>
       <Wrapper>
@@ -14,6 +31,7 @@ export default function NavBar({ className }) {
               type="text"
               placeholder="Search"
               className="input input-bordered w-24 md:w-auto"
+              onChange={searchNews}
             />
             <div className="navbar-end">
               <button className="btn btn-ghost btn-circle">
